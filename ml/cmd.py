@@ -43,7 +43,13 @@
 
 """
 
-from docopt import docopt
+VERSION='0.2'
+
+try:
+    from docopt import docopt
+except ImportError:
+    print 'This script needs a "docopt" module (http://docopt.org)'
+    raise
 
 
 
@@ -51,16 +57,16 @@ import sys
 import subprocess
 import os.path
 
-def run(cmd, args=[]):
+def run(cmd, *args):
     """Run given command in new process (and returns immediately)
 
     Examples:
     run("xclock")
     run("xterm")  - spawns new xterm in act. directory
-    run("xterm", ["-e", "ipython"])
+    run("xterm", "-e", "ipython")
     """
 
-    subprocess.Popen([cmd] + args)
+    subprocess.Popen([cmd] + list(args))
 
 def shell(cmd):
     """Run given command using system shell, wait for it, and return a string with its output.
@@ -72,27 +78,27 @@ def shell(cmd):
     """
     return subprocess.check_output(cmd, shell=True)
 
-def term(args):
+def term(*args):
     """Run the default terminal emulator in new process."""
-    run("x-terminal-emulator", args)
+    run("x-terminal-emulator", *args)
 
 def is_vim_running(servername):
     servers = shell("vim --serverlist").split('\n')
     return servername in servers
     
 
-def edit(args):
+def edit(*args):
     """Run the best text editor (or open a file in existing instance)."""
     if is_vim_running("EDITOR"):
         if args:
-            run("gvim", ["--servername", "EDITOR", "--remote"] + args)
+            run("gvim", "--servername", "EDITOR", "--remote", *args)
         else:
             raise Exception("Editor is already running! (and no file to open provided)")
     else:
-        run("gvim", ["--servername", "EDITOR"] + args)
+        run("gvim", "--servername", "EDITOR", *args)
  
 
-def fmgr(args):
+def fmgr(*args):
     """Run the best file manager (or open a directory in an existing instance)."""
     raise NotImplementedError
 
@@ -113,23 +119,24 @@ def main(argv):
     if argv[0] in ["cmd", "cmd.py"]:
         argv = argv[1:]
 
-    argdict = docopt(__doc__, argv=argv, version='ka.cmd 0.2', options_first=True)
+    argdict = docopt(__doc__, argv=argv, version=VERSION, options_first=True)
 
     if __debug__:
-        print "arguments:", argdict #TODO: remove
+         "arguments:", argdict #TODO: remove
 
     if   argdict['run'] or argdict['r']:
-        run(argdict['<subcmd>'], argdict['<args>'])
+        run(argdict['<subcmd>'], *argdict['<args>'])
     elif argdict['shell'] or argdict['s']:
-        out = shell(argdict['<subcmd>'] + argdict['<args>'].join(' '))
+        out = shell(argdict['<subcmd>'] + ' ' + ' '.join(argdict['<args>']))
         if out:
             print out
     elif argdict['term'] or argdict['t']:
-        term(argdict['<args>'])
+        term(*argdict['<args>'])
     elif argdict['edit'] or argdict['e']:
-        edit(argdict['<args>'])
+        edit(*argdict['<args>'])
     elif argdict['fmgr'] or argdict['f']:
-        fmgr(argdict['<args>'])
+        fmgr(*argdict['<args>'])
+
 
 if __name__ == '__main__':
     main(sys.argv)
