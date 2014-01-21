@@ -92,15 +92,24 @@ def edit(*args):
     if is_vim_running("EDITOR"):
         if args:
             run("gvim", "--servername", "EDITOR", "--remote", *args)
-        else:
-            raise Exception("Editor is already running! (and no file to open provided)")
     else:
         run("gvim", "--servername", "EDITOR", *args)
+
+    #TODO: activate editor window if under qtile
  
 
 def fmgr(*args):
     """Run the best file manager (or open a directory in an existing instance)."""
-    raise NotImplementedError
+    if args:
+        if os.path.isfile(args[0]):
+            args[0] = os.path.dirname(args[0])
+    if is_vim_running("FILEMANAGER"):
+        run("gvim", "--servername", "FILEMANAGER", "--remote", *args)
+    else:
+        run("gvim", "--servername", "FILEMANAGER", *args)
+    
+
+    #TODO: activate fmgr window if under qtile
 
 
 
