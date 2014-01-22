@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 
-"""Collection of custom shortcut commands to use either as shell commands or as python functions.
+"""Collection of my custom commands to use either as shell commands or as python functions.
+
+    This script is not really prepared to run on other systems than mine.
+    If you want to use it, you should review and adjust the content of this file first.
 
     Usage:
-        ./cmd.py ( run   | r )  <subcmd> [<args>...]
-        ./cmd.py ( shell | s )  <subcmd> [<args>...]
-        ./cmd.py ( term  | t )           [<args>...]
-        ./cmd.py ( edit  | e )           [<args>...]
-        ./cmd.py ( fmgr  | f )           [<args>...]
-        ./cmd.py [-h | --help | -v | --version]
+        cmd ( run   | r )  <subcmd> [<args>...]
+        cmd ( shell | s )  <subcmd> [<args>...]
+        cmd ( term  | t )           [<args>...]
+        cmd ( edit  | e )           [<args>...]
+        cmd ( fmgr  | f )           [<args>...]
+        cmd [-h | --help | -v | --version]
 
     Options:
         -h, --help         Print the help page
@@ -22,24 +25,30 @@
         fmgr:              Run the best file manager (or open a directory in existing instance).
 
 
-    Convenient way to use it from shell level is to use symbolic links created
-    in 'bin' subdirectory. Then name of the symlink select the command/function,
+    Convenient way to use it from shell level is to create some symlinks to it with
+    names equal to command names like:
+        $ ln -s cmd.py run
+        $ ln -s cmd.py r
+        $ ln -s cmd.py shell
+        $ ln -s cmd.py s
+        etc...
+    Then the name of the symlink select the command/function,
     so user doesn't have to specify it again.
 
     For example, these commands do the same:
         $ ./cmd.py run xclock
-        $ ./bin/run xclock
-        $ ./bin/r xclock
+        $ ./run xclock
+        $ ./r xclock
 
     Next example:
         $ ./cmd.py edit -d file1.py file2.py file3.py 
-        $ ./bin/edit -d file1.py file2.py file3.py 
-        $ ./bin/e -d file1.py file2.py file3.py 
+        $ ./edit -d file1.py file2.py file3.py 
+        $ ./e -d file1.py file2.py file3.py 
 
     Next example:
         $ ./cmd.py shell cat cmd.py | grep gr
-        $ ./bin/shell cat cmd.py | grep gr
-        $ ./bin/s cat cmd.py | grep gr
+        $ ./shell cat cmd.py | grep gr
+        $ ./s cat cmd.py | grep gr
 
 """
 
@@ -121,7 +130,8 @@ e = edit
 f = fmgr
 
 
-def main(argv):
+def main():
+    argv = sys.argv[:]
 
     argv[0] = os.path.basename(argv[0])
 
@@ -148,6 +158,6 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()
 
 
