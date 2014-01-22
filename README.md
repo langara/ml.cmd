@@ -10,6 +10,6 @@ scripts in a way to be available from different levels:
 - python scripts (like qtile config file)
 
 This script is not really prepared to run on other systems than mine.
-If you want to use it, first you should review and adjust the content of cmd.py file.
+If you want to use it, first you should review and adjust the content of `ml/cmd.py` file.
 
 
