@@ -10,6 +10,9 @@
         cmd ( shell   | s  )  <subcmd> [<args>...]
         cmd ( term    | t  )           [<args>...]
         cmd ( edit    | e  )  <file>
+        cmd ( openf   | o  )  <file>
+        cmd ( hist    | h  )  [<commands>...]
+        cmd ( decomp  | de )  <file> [<dir>]
         cmd ( diff    | d  )  <file1> <file2> [<file3>]
         cmd ( fmgr    | f  )  <dir>
         cmd ( fehback | fb )  <dir>
@@ -24,6 +27,9 @@
         shell:             Run given command, wait for it, then print its output.
         term:              Run the default terminal emulator in new process.
         edit:              Run the best text editor (or open a file in existing instance).
+        openf:             Open file using best program available for given file type (now it is just:xdg-open)
+        hist:              Adds given commands to bash history so they are easily available in new terminals by using up arrow key
+        decomp:            Decompress archive file. Supports all most popular archive types.
         diff:              Run the best text editor in diff mode.
         fmgr:              Run the best file manager (or open a directory in existing instance).
         fehback:           Set two random background images for two screens (using the "feh" app)
@@ -56,7 +62,7 @@
 
 """
 
-VERSION='0.2'
+VERSION='0.2.1'
 
 try:
     from docopt import docopt
@@ -120,6 +126,43 @@ def edit(filename, vimexecname="gvim", vimservername="EDITOR", addfilenames=[]):
 
     #TODO: activate editor window if under qtile
  
+def openf(filename):
+    """Open file using best available application. Current implementation just use xdg-open."""
+
+    shell("xdg-open " + filename)
+
+def hist(*commands):
+    """Add some commands to bash history. If user opens a new bash after, he will have quick access to those commands using the up arrow key."""
+
+    histfile = open(exp("~/.bash_history"), "a")
+    commands = "\n".join(commands) + "\n"
+    histfile.write(commands)
+    histfile.close()
+
+
+def decomp(filename, dirname=None):
+    """Decompresses given file to given directory (or to filename.dir directory by default)"""
+
+    if not dirname:
+        dirname = filename + ".dir"
+    shell('mkdir "' + dirname + '"')
+    os.chdir(dirname)
+    if filename.endswith(".tar"):
+        shell('tar -xvf "../' + filename + '"')
+    elif filename.endswith(".tgz"):
+        shell('tar -xzvf "../' + filename + '"')
+    elif filename.endswith(".tar.gz"):
+        shell('tar -xzvf "../' + filename + '"')
+    elif filename.endswith(".tar.bz2"):
+        shell('tar -xjvf "../' + filename + '"')
+    elif filename.endswith(".zip"):
+        shell('unzip "../' + filename + '"')
+    elif filename.endswith(".rar"):
+        shell('unrar x "../' + filename + '"')        
+    elif True:
+        print "Unknown archive type"
+    os.chdir("..")
+
 
 def diff(filename1, filename2, filename3=None):
     addfilenames = [filename2]
@@ -156,6 +199,9 @@ r = run
 s = shell
 t = term
 e = edit
+o = openf
+h = hist
+de = decomp
 d = diff
 f = fmgr
 fb = fehback
@@ -184,6 +230,12 @@ def main():
         term(*argdict['<args>'])
     elif argdict['edit'] or argdict['e']:
         edit(exp(argdict['<file>']))
+    elif argdict['openf'] or argdict['o']:
+        openf(exp(argdict['<file>']))
+    elif argdict['hist'] or argdict['h']:
+        hist(*argdict['<commands>'])
+    elif argdict['decomp'] or argdict['de']:
+        decomp(exp(argdict['<file>']), exp(argdict['<dir>']))
     elif argdict['diff'] or argdict['d']:
         diff(exp(argdict['<file1>']), exp(argdict['<file2>']), exp(argdict['<file3>']))
     elif argdict['fmgr'] or argdict['f']:

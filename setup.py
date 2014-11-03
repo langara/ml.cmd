@@ -3,7 +3,7 @@ ez_setup.use_setuptools()
 from setuptools import setup, find_packages
 setup(
     name = 'ml.cmd',
-    version = '0.2',
+    version = '0.2.1',
     packages = find_packages(),
     install_requires = ['docopt>=0.6.1'],
     author = "Marek Langiewicz",
@@ -19,6 +19,9 @@ setup(
             'shell = ml.cmd:main',
             'term = ml.cmd:main',
             'edit = ml.cmd:main',
+            'openf = ml.cmd:main',
+            'hist = ml.cmd:main',
+            'decomp = ml.cmd:main',
             'diff = ml.cmd:main',
             'fmgr = ml.cmd:main',
             'fehback = ml.cmd:main',
@@ -26,6 +29,9 @@ setup(
             's = ml.cmd:main',
             't = ml.cmd:main',
             'e = ml.cmd:main',
+            'o = ml.cmd:main',
+            'h = ml.cmd:main',
+            'de = ml.cmd:main',
             'd = ml.cmd:main',
             'f = ml.cmd:main',
             'fb = ml.cmd:main',
