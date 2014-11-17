@@ -11,6 +11,7 @@
         cmd ( term    | t  )           [<args>...]
         cmd ( edit    | e  )  <file>
         cmd ( openf   | o  )  <file>
+        cmd ( play    | p  )  <file>
         cmd ( hist    | h  )  [<commands>...]
         cmd ( decomp  | de )  <file> [<dir>]
         cmd ( diff    | d  )  <file1> <file2> [<file3>]
@@ -28,6 +29,7 @@
         term:              Run the default terminal emulator in new process.
         edit:              Run the best text editor (or open a file in existing instance).
         openf:             Open file using best program available for given file type (now it is just:xdg-open)
+        play:              Play given multimedia file
         hist:              Adds given commands to bash history so they are easily available in new terminals by using up arrow key
         decomp:            Decompress archive file. Supports all most popular archive types.
         diff:              Run the best text editor in diff mode.
@@ -131,6 +133,10 @@ def openf(filename):
 
     shell("xdg-open " + filename)
 
+def play(filename):
+    """Play given multimetia file."""
+    run("smplayer", filename) #TODO: run audacious for audio files
+
 def hist(*commands):
     """Add some commands to bash history. If user opens a new bash after, he will have quick access to those commands using the up arrow key."""
 
@@ -200,6 +206,7 @@ s = shell
 t = term
 e = edit
 o = openf
+p = play
 h = hist
 de = decomp
 d = diff
@@ -232,6 +239,8 @@ def main():
         edit(exp(argdict['<file>']))
     elif argdict['openf'] or argdict['o']:
         openf(exp(argdict['<file>']))
+    elif argdict['play'] or argdict['p']:
+        play(exp(argdict['<file>']))
     elif argdict['hist'] or argdict['h']:
         hist(*argdict['<commands>'])
     elif argdict['decomp'] or argdict['de']:
