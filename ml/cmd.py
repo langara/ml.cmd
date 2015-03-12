@@ -11,6 +11,7 @@
         cmd ( term    | t  )           [<args>...]
         cmd ( edit    | e  )  <file>
         cmd ( openf   | o  )  <file>
+        cmd ( lopenf  | lo )  <file>
         cmd ( play    | p  )  <file>
         cmd ( hist    | h  )  [<commands>...]
         cmd ( decomp  | de )  <file> [<dir>]
@@ -29,6 +30,7 @@
         term:              Run the default terminal emulator in new process.
         edit:              Run the best text editor (or open a file in existing instance).
         openf:             Open file using best program available for given file type (now it is just:xdg-open)
+        lopenf:            Open file specified inside given file using best program available
         play:              Play given multimedia file
         hist:              Adds given commands to bash history so they are easily available in new terminals by using up arrow key
         decomp:            Decompress archive file. Supports all most popular archive types.
@@ -64,7 +66,7 @@
 
 """
 
-VERSION='0.2.1'
+VERSION='0.2.2'
 
 try:
     from docopt import docopt
@@ -97,7 +99,7 @@ def run(cmd, *args):
     subprocess.Popen([cmd] + list(args))
 
 def shell(cmd):
-    """Run given command using system shell, wait for it, and return a string with its output.
+    """Run given command using system shell, wait for it, and return a string containing the output.
 
     cmd - string command 
     Examples:
@@ -129,9 +131,19 @@ def edit(filename, vimexecname="gvim", vimservername="EDITOR", addfilenames=[]):
     #TODO: activate editor window if under qtile
  
 def openf(filename):
-    """Open file using best available application. Current implementation just use xdg-open."""
+    """Open file (or url) using best available application. Current implementation just use xdg-open."""
 
-    shell("xdg-open " + filename)
+    shell("xdg-open '" + filename + "'")
+
+def lopenf(filename):
+    """Open file or url specified inside given file using best available application.
+    
+    It can be useful for creating simple oneline files with links to web pages with special extension like .lopenf
+    and to associate this kind of files with lopenf command, so if you click on such file, it will pop up your browser.
+    """
+
+    with open(exp(filename), "r") as link:
+        openf(link.read())
 
 def play(filename):
     """Play given multimetia file."""
@@ -140,10 +152,9 @@ def play(filename):
 def hist(*commands):
     """Add some commands to bash history. If user opens a new bash after, he will have quick access to those commands using the up arrow key."""
 
-    histfile = open(exp("~/.bash_history"), "a")
-    commands = "\n".join(commands) + "\n"
-    histfile.write(commands)
-    histfile.close()
+    with open(exp("~/.bash_history"), "a") as histfile:
+        commands = "\n".join(commands) + "\n"
+        histfile.write(commands)
 
 
 def decomp(filename, dirname=None):
@@ -206,6 +217,7 @@ s = shell
 t = term
 e = edit
 o = openf
+lo = lopenf
 p = play
 h = hist
 de = decomp
@@ -239,6 +251,8 @@ def main():
         edit(exp(argdict['<file>']))
     elif argdict['openf'] or argdict['o']:
         openf(exp(argdict['<file>']))
+    elif argdict['lopenf'] or argdict['lo']:
+        lopenf(exp(argdict['<file>']))
     elif argdict['play'] or argdict['p']:
         play(exp(argdict['<file>']))
     elif argdict['hist'] or argdict['h']:
