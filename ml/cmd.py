@@ -18,6 +18,7 @@
         cmd ( diff    | d  )  <file1> <file2> [<file3>]
         cmd ( fmgr    | f  )  <dir>
         cmd ( fehback | fb )  <dir>
+        cmd ( usrcmd  | uc )  <ucmd> [<args>...]
         cmd [-h | --help | -v | --version]
 
     Options:
@@ -37,6 +38,7 @@
         diff:              Run the best text editor in diff mode.
         fmgr:              Run the best file manager (or open a directory in existing instance).
         fehback:           Set two random background images for two screens (using the "feh" app)
+        usrcmd:            Invokes user defined function with given string parameters (from ~/.usrcmd.py)
 
 
     Convenient way to use it from shell level is to create some symlinks to it with
@@ -80,6 +82,8 @@ import sys
 import subprocess
 import os
 import random
+import imp
+from pprint import pprint
 
 def exp(path):
     """Expand shell variables, and user shortcuts (~ or ~user)"""
@@ -210,6 +214,10 @@ def fehback(dirname):
     filenames = [os.path.join(dirname, f) for f in filenames]
     run("feh", "--bg-fill", *filenames)
 
+def usrcmd(cmd, *args):
+    """Run given user command (from ~/.usrcmd.py)"""
+    mod = imp.load_source('usrcmd', exp('~/.usrcmd.py'))
+    mod.__dict__[cmd](*args);
 
 #shortcut function names
 r = run
@@ -224,6 +232,7 @@ de = decomp
 d = diff
 f = fmgr
 fb = fehback
+uc = usrcmd
 
 
 def main():
@@ -265,6 +274,8 @@ def main():
         fmgr(exp(argdict['<dir>']))
     elif argdict['fehback'] or argdict['fb']:
         fehback(exp(argdict['<dir>']))
+    elif argdict['usrcmd'] or argdict['uc']:
+        usrcmd(argdict['<ucmd>'], *argdict['<args>'])
 
 
 if __name__ == '__main__':

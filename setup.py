@@ -27,6 +27,7 @@ setup(
             'diff = ml.cmd:main',
             'fmgr = ml.cmd:main',
             'fehback = ml.cmd:main',
+            'usrcmd = ml.cmd:main',
             'r = ml.cmd:main',
             's = ml.cmd:main',
             't = ml.cmd:main',
@@ -39,6 +40,7 @@ setup(
             'd = ml.cmd:main',
             'f = ml.cmd:main',
             'fb = ml.cmd:main',
+            'uc = ml.cmd:main',
         ]
     },
     zip_safe = True,
