@@ -217,7 +217,9 @@ def fehback(dirname):
 def usrcmd(cmd, *args):
     """Run given user command (from ~/.usrcmd.py)"""
     mod = imp.load_source('usrcmd', exp('~/.usrcmd.py'))
-    mod.__dict__[cmd](*args);
+    res = mod.__dict__[cmd](*args);
+    if res != None:
+        pprint(res)
 
 #shortcut function names
 r = run
