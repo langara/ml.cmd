@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+ <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+   <mime-type type="application/x-lopenf">  
+       <icon name="go-jump" />
+       <comment>oneline file with link to other file or url</comment>
+       <glob pattern="*.lopenf"/>
+   </mime-type>
+ </mime-info>

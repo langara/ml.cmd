@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=2.2
+Type=Application
+Name=LOpenF
+Exec=lopenf %f
+Comment=openf link inside given file
+Categories=Network;Utility;
+MimeType=application/x-lopenf
+Icon=go-jump
